@@ -90,6 +90,19 @@ class MatchReport(BaseModel):
     critical_gaps: list[str] = Field(default_factory=list)
 
 
+class CoachQuestion(BaseModel):
+    requirement_id: str
+    question: str
+    why: str = Field(description="What answering this would unlock for the resume")
+    related_fact_id: int | None = Field(
+        default=None, description="Existing fact this would strengthen, if any"
+    )
+
+
+class CoachReport(BaseModel):
+    questions: list[CoachQuestion]
+
+
 class ResumeBullet(BaseModel):
     text: str
     fact_ids: list[int] = Field(min_length=1)

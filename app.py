@@ -7,6 +7,7 @@ import streamlit as st
 from dotenv import load_dotenv
 
 import database as db
+from coach import coach_questions
 from cover_letter import generate_cover_letter
 from document_export import cover_letter_docx, resume_docx
 from jd_parser import parse_jd
@@ -155,6 +156,59 @@ with analyze_tab:
                 st.write(item.rationale)
                 st.write("Suggestion: ", item.suggestion)
                 st.caption("Evidence: " + (", ".join(f"#{x}" for x in item.fact_ids) or "none"))
+
+        st.divider()
+        st.subheader("Resume Coach")
+        st.caption(
+            "The coach interviews you about gaps and weak spots — often the experience exists, "
+            "it just never made it into your facts. Honest answers only; blank or \"no\" is fine."
+        )
+        if st.button("Get coaching questions"):
+            try:
+                with st.spinner("Reviewing your match for things worth asking about…"):
+                    st.session_state.coach = coach_questions(
+                        jd, report, db.list_facts(confirmed_only=True)
+                    )
+            except Exception as exc:
+                st.error(str(exc))
+
+        if "coach" in st.session_state:
+            requirements_by_id = {r.id: r for r in jd.requirements}
+            for i, q in enumerate(st.session_state.coach.questions):
+                st.markdown(f"**{i + 1}. {q.question}**")
+                st.caption(f"Why it matters: {q.why}")
+                st.text_area(
+                    "Your answer (leave blank if it doesn't apply)",
+                    key=f"coach_ans_{i}", height=80, label_visibility="collapsed",
+                    placeholder="Leave blank if it doesn't apply — never invent anything.",
+                )
+            if st.button("Save answers & re-run match", type="primary"):
+                answered = 0
+                for i, q in enumerate(st.session_state.coach.questions):
+                    answer = (st.session_state.get(f"coach_ans_{i}") or "").strip()
+                    if not answer or answer.lower() in {"no", "n/a", "none"}:
+                        continue
+                    req = requirements_by_id[q.requirement_id]
+                    db.save_fact(Fact(
+                        fact_type=FactType.EXPERIENCE,
+                        title=f"Coaching: {req.text[:60]}",
+                        content=answer,
+                        skills=req.skills,
+                        confirmed=True,
+                    ))
+                    answered += 1
+                if not answered:
+                    st.warning("No answers to save.")
+                else:
+                    try:
+                        with st.spinner(f"Saved {answered} new facts. Re-running match…"):
+                            new_report = match(jd, db.list_facts(confirmed_only=True))
+                            db.update_job_match(st.session_state.job_id, new_report.model_dump_json())
+                            st.session_state.report = new_report
+                            del st.session_state.coach
+                        st.rerun()
+                    except Exception as exc:
+                        st.error(str(exc))
 
 with materials_tab:
     st.subheader("Generate reviewable materials")
