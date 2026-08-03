@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv/bin/python -m pytest tests/ -q)",
+      "Bash(.venv/bin/python -c \"import streamlit, openai, pydantic, docx, dotenv; print\\('deps ok'\\)\")",
+      "Skill(claude-api)",
+      "Skill(claude-api:*)",
+      "Bash(.venv/bin/python -c ' *)",
+      "Bash(.venv/bin/python -c \"import app\")",
+      "Bash(sqlite3 data/job_copilot.db \"SELECT confirmed, COUNT\\(*\\) FROM facts GROUP BY confirmed\")"
+    ]
+  }
+}
