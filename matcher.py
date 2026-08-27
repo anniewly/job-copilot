@@ -21,7 +21,7 @@ def match(jd: JDAnalysis, facts: list[Fact]) -> MatchReport:
         "job": jd.model_dump(mode="json"),
         "confirmed_facts": [f.model_dump(mode="json") for f in confirmed],
     }
-    report = structured_response(SYSTEM, json.dumps(payload, ensure_ascii=False), MatchReport)
+    report = structured_response(SYSTEM, json.dumps(payload, ensure_ascii=False), MatchReport, name="match_requirements")
     valid_ids = {f.id for f in confirmed}
     requirement_ids = {r.id for r in jd.requirements}
     seen = set()
