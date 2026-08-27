@@ -24,7 +24,7 @@ def extract_facts_from_resume(resume_text: str = "", pdf_bytes: bytes | None = N
     if not resume_text.strip() and not pdf_bytes:
         raise ValueError("Provide resume text or a PDF file.")
     prompt = resume_text.strip() or "Extract facts from the attached resume."
-    extraction = structured_response(EXTRACT_SYSTEM, prompt, ResumeExtraction, pdf_bytes=pdf_bytes)
+    extraction = structured_response(EXTRACT_SYSTEM, prompt, ResumeExtraction, pdf_bytes=pdf_bytes, name="extract_resume_facts")
     if not extraction.facts:
         raise ValueError("No facts could be extracted. Check that the input is a resume.")
     return [Fact(**f.model_dump(), confirmed=False) for f in extraction.facts]

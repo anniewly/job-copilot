@@ -20,7 +20,7 @@ def generate_cover_letter(company: str, jd: JDAnalysis, report: MatchReport,
         "match_report": report.model_dump(mode="json"),
         "confirmed_facts": [f.model_dump(mode="json") for f in confirmed],
     }
-    draft = structured_response(SYSTEM, json.dumps(payload, ensure_ascii=False), CoverLetterDraft)
+    draft = structured_response(SYSTEM, json.dumps(payload, ensure_ascii=False), CoverLetterDraft, name="generate_cover_letter")
     if len(draft.paragraphs) != len(draft.paragraph_fact_ids):
         raise ValueError("Cover letter paragraph and citation counts do not match.")
     valid_ids = {f.id for f in confirmed}

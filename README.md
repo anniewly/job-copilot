@@ -32,6 +32,11 @@ Data is stored in `data/job_copilot.db` by default. The default model is `claude
 - The code rejects unknown fact IDs, uncovered JD requirements, and unsupported paragraphs.
 - AI output still requires human review; fact-ID validation prevents unsourced citations but does not replace semantic checking.
 
+## Observability & evals
+
+- **Tracing**: set `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY` (free at cloud.langfuse.com) and every AI call is traced with prompts, outputs, token usage, and latency. Without keys, tracing is silently off.
+- **Evals**: `python -m evals.run_evals` runs the pipeline against golden JDs and a fixture fact library: parser structural checks, matcher gap/evidence checks (no fabricated strength for skills the fixture lacks), and an LLM-as-judge faithfulness metric on every generated resume bullet. `--fast` skips generation + judging. Reports land in `evals/results/`.
+
 ## Modules
 
 - `app.py`: Streamlit UI

@@ -3,3 +3,4 @@ anthropic>=0.79,<1
 pydantic>=2.10,<3
 python-docx>=1.1,<2
 python-dotenv>=1.0,<2
+langfuse>=3.0,<4

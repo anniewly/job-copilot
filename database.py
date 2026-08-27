@@ -142,6 +142,14 @@ def list_jobs(db_path: str | Path | None = None) -> list[dict]:
         return [dict(r) for r in conn.execute("SELECT * FROM jobs ORDER BY updated_at DESC").fetchall()]
 
 
+def update_job_match(job_id: int, match_report_json: str, db_path: str | Path | None = None) -> None:
+    with connection(db_path) as conn:
+        conn.execute(
+            "UPDATE jobs SET match_report_json=?, updated_at=CURRENT_TIMESTAMP WHERE id=?",
+            (match_report_json, job_id),
+        )
+
+
 def update_job_status(job_id: int, status: str, notes: str, db_path: str | Path | None = None) -> None:
     with connection(db_path) as conn:
         conn.execute(

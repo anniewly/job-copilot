@@ -29,7 +29,7 @@ def generate_resume(jd: JDAnalysis, report: MatchReport, facts: list[Fact]) -> R
         "match_report": report.model_dump(mode="json"),
         "confirmed_facts": [f.model_dump(mode="json") for f in confirmed],
     }
-    draft = structured_response(SYSTEM, json.dumps(payload, ensure_ascii=False), ResumeDraft)
+    draft = structured_response(SYSTEM, json.dumps(payload, ensure_ascii=False), ResumeDraft, name="generate_resume")
     _validate_fact_ids(draft, {f.id for f in confirmed})
     for section in draft.sections:
         for entry in section.entries:
