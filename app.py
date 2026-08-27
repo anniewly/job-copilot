@@ -30,7 +30,9 @@ with st.sidebar:
         st.success(f"AI configured · {os.getenv('ANTHROPIC_MODEL', 'claude-opus-5')}")
     else:
         st.warning("ANTHROPIC_API_KEY not set")
-    st.caption(f"Facts: {len(db.list_facts(confirmed_only=True))}")
+    from ai_client import tracing_enabled
+    st.caption(("Tracing: Langfuse ✓" if tracing_enabled() else "Tracing: off")
+               + f" · Facts: {len(db.list_facts(confirmed_only=True))}")
 
     with st.expander("Profile (resume header)", expanded=not profile.name):
         with st.form("profile_form"):

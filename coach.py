@@ -24,7 +24,7 @@ def coach_questions(jd: JDAnalysis, report: MatchReport, facts: list[Fact]) -> C
         "match_report": report.model_dump(mode="json"),
         "confirmed_facts": [f.model_dump(mode="json") for f in confirmed],
     }
-    result = structured_response(SYSTEM, json.dumps(payload, ensure_ascii=False), CoachReport)
+    result = structured_response(SYSTEM, json.dumps(payload, ensure_ascii=False), CoachReport, name="coach_questions")
     requirement_ids = {r.id for r in jd.requirements}
     valid_fact_ids = {f.id for f in confirmed}
     result.questions = [
